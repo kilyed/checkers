@@ -160,4 +160,138 @@ bool movePiece(char Board[8][8], int fromX, int fromY, int toX, int toY)
 
     return true;
 }
+bool isGameOver(char Board[8][8])
+{
+    bool whitePiecesLeft = false;
+    bool blackPiecesLeft = false;
+    // Проверяем, есть ли еще белые или черные шашки на доске
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if (Board[i][j] == 'A' || Board[i][j] == 'K')
+            {
+                whitePiecesLeft = true;
+            }
+            else if (Board[i][j] == 'B' || Board[i][j] == 'Q')
+            {
+                blackPiecesLeft = true;
+            }
+        }
+    }
+
+    // Если либо у белых, либо у черных не осталось шашек, игра окончена
+    if (!whitePiecesLeft || !blackPiecesLeft)
+    {
+        return true;
+    }
+
+    // Если белые или черные не могут сделать ход, игра окончена
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if (Board[i][j] == 'A' || Board[i][j] == 'K')
+            {
+                for (int k = -1; k <= 1; k++)
+                {
+                    for (int l = -1; l <= 1; l++)
+                    {
+                        if (isValidMove(Board, i, j, i + k, j + l))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if (Board[i][j] == 'B' || Board[i][j] == 'Q')
+            {
+                for (int k = -1; k <= 1; k++)
+                {
+                    for (int l = -1; l <= 1; l++)
+                    {
+                        if (isValidMove(Board, i, j, i + k, j + l))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+int main()
+{
+    setlocale(LC_ALL, "RUS");
+    // Создаем доску и расставляем на ней шашки
+    char Board[8][8] = {
+    {' ', 'A', ' ', 'A', ' ', 'A', ' ', 'A'},
+    {'A', ' ', 'A', ' ', 'A', ' ', 'A', ' '},
+    {' ', 'A', ' ', 'A', ' ', 'A', ' ', 'A'},
+    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+    {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+    {'B', ' ', 'B', ' ', 'B', ' ', 'B', ' '},
+    {' ', 'B', ' ', 'B', ' ', 'B', ' ', 'B'},
+    {'B', ' ', 'B', ' ', 'B', ' ', 'B', ' '}
+    };// Отображаем доску на экране
+    Display(Board);
+    bool isGameOver = false;
+    while (!isGameOver)
+    {
+        // Ход игрока A (верхние шашки)
+        int fromX, fromY, toX, toY;
+        string fromPos, toPos;
+        bool validMove = false;
+        do {
+            cout << "Ход игрока A (верхние шашки)" << endl;
+            cout << "Введите координаты шашки, которой хотите походить (например, A3): ";
+            cin >> fromPos;
+            fromX = fromPos[1] - '1';
+            fromY = fromPos[0] - 'A';
+            cout << "Введите координаты клетки, куда хотите походить (например, B4): ";
+            cin >> toPos;
+            toX = toPos[1] - '1';
+            toY = toPos[0] - 'A';
+
+            validMove = isValidMove(Board, fromX, fromY, toX, toY);
+            if (!validMove) {
+                cout << "Ход недопустим" << endl;
+            }
+        } while (!validMove);
+
+        // Перемещаем шашку игрока A
+        movePiece(Board, fromX, fromY, toX, toY);
+
+        // Отображаем доску на экране
+        Display(Board);
+
+        // Ход игрока B (нижние шашки)
+        validMove = false;
+        do {
+            cout << "Ход игрока B (нижние шашки)" << endl;
+            cout << "Введите координаты шашки, которой хотите походить (например, E6): ";
+            cin >> fromPos;
+            fromX = fromPos[1] - '1';
+            fromY = fromPos[0] - 'A';
+            cout << "Введите координаты клетки, куда хотите походить (например, D5): ";
+            cin >> toPos;
+            toX = toPos[1] - '1';
+            toY = toPos[0] - 'A';
+
+            validMove = isValidMove(Board, fromX, fromY, toX, toY);
+            if (!validMove) {
+                cout << "Ход недопустим" << endl;
+            }
+        } while (!validMove);
+
+        // Перемещаем шашку игрока B
+        movePiece(Board, fromX, fromY, toX, toY);
+
+        // Отображаем доску на экране
+        Display(Board);
+    }
+}
+
 
